@@ -114,6 +114,9 @@ export default {
     isDisabled(date) {
       return this.disabledDate(new Date(date), this.innerValue);
     },
+    isCustomDisabled: function isDisabled(date) {
+      return this.compareDisabledDate(new Date(date), this.innerValue);
+    },
     emitDate(date, type) {
       if (!this.isDisabled(date)) {
         this.$emit('select', date, type, this.innerValue);
@@ -203,6 +206,17 @@ export default {
       return classes.concat(this.getClasses(cellDate, this.innerValue, classes.join(' ')));
     },
     getStateClass(cellDate) {
+      const customDisabled = this.isCustomDisabled(cellDate);
+
+      if (customDisabled) {
+        // console.log('customDisabled => ', customDisabled)
+        if (customDisabled === 1) return 'custom-disabled start-interval-disabled disabled';
+        if (customDisabled === 2) return 'custom-disabled disabled';
+        if (customDisabled === 3) return 'custom-disabled end-interval-disabled disabled';
+        if (customDisabled === 4)
+          return 'custom-disabled start-interval-disabled same-date disabled';
+      }
+
       if (this.isDisabled(cellDate)) {
         return 'disabled';
       }
