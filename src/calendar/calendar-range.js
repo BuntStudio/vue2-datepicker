@@ -114,7 +114,8 @@ export default {
     getRangeClasses(cellDate, currentDates, classnames) {
       const classes = [].concat(this.getClasses(cellDate, currentDates, classnames));
 
-      if (/disabled|active/.test(classnames)) return classes;
+      if (/disabled|not-current-month/.test(classnames)) return classes;
+      // if (/disabled|active/.test(classnames)) return classes;
 
       const inRange = (data, range, fn = v => v.getTime()) => {
         const value = fn(data);
@@ -124,8 +125,32 @@ export default {
         }
         return value > min && value < max;
       };
+
+      if (
+        currentDates.length === 2 &&
+        cellDate.getTime() === currentDates[0].getTime() &&
+        cellDate.getTime() === currentDates[1].getTime()
+      ) {
+        return 'active start-interval same-date';
+      }
+      if (currentDates.length === 2 && cellDate.getTime() === currentDates[0].getTime()) {
+        return 'active start-interval';
+      }
+      if (currentDates.length === 2 && cellDate.getTime() === currentDates[1].getTime()) {
+        return 'active end-interval';
+      }
+
       if (currentDates.length === 2 && inRange(cellDate, currentDates)) {
         return classes.concat('in-range');
+      }
+
+      if (
+        currentDates.length === 1 &&
+        this.hoveredValue &&
+        this.hoveredValue.getTime() === cellDate.getTime() &&
+        this.hoveredValue.getTime() !== currentDates[0].getTime()
+      ) {
+        return 'active end-interval';
       }
       if (
         currentDates.length === 1 &&
