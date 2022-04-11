@@ -37,6 +37,10 @@ export default {
       type: Function,
       default: () => false,
     },
+    compareDisabledDate: {
+      type: Function,
+      default: () => false,
+    },
     type: {
       type: String,
       default: 'date',
@@ -114,7 +118,7 @@ export default {
     isDisabled(date) {
       return this.disabledDate(new Date(date), this.innerValue);
     },
-    isCustomDisabled: function isDisabled(date) {
+    isCustomDisabled(date) {
       return this.compareDisabledDate(new Date(date), this.innerValue);
     },
     emitDate(date, type) {

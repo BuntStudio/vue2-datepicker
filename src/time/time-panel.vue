@@ -216,16 +216,16 @@ export default {
     },
     getClasses(value, type) {
       const cellDate = new Date(value);
-
-      const customDisabled = this.isCustomDisabled(value, type);
-
-      if (customDisabled) {
-        if (customDisabled === 1) return 'custom-disabled start-interval-disabled disabled';
-        if (customDisabled === 2) return 'custom-disabled disabled';
-        if (customDisabled === 3) return 'custom-disabled end-interval-disabled disabled';
-        if (customDisabled === 4)
-          return 'custom-disabled start-interval-disabled same-date disabled';
-      }
+      //
+      // const customDisabled = this.isCustomDisabled(value, type);
+      //
+      // if (customDisabled) {
+      //   if (customDisabled === 1) return 'custom-disabled start-interval-disabled disabled';
+      //   if (customDisabled === 2) return 'custom-disabled disabled';
+      //   if (customDisabled === 3) return 'custom-disabled end-interval-disabled disabled';
+      //   if (customDisabled === 4)
+      //     return 'custom-disabled start-interval-disabled same-date disabled';
+      // }
       if (this.isDisabled(value, type)) {
         return 'disabled';
       }
