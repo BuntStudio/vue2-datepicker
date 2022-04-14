@@ -135,12 +135,23 @@ export default {
       );
     },
     isDisabledMonth(month) {
-      if (!this.minDate() || !this.maxDate()) return false;
+      if (
+        typeof this.minDate !== 'function' ||
+        typeof this.maxDate !== 'function' ||
+        !this.minDate() ||
+        !this.maxDate()
+      )
+        return false;
+
       const getYearFromMonth = this.getMonthCellDate(month).getFullYear();
       const minDateYear = new Date(this.minDate()).getFullYear();
       const minDateMonth = new Date(this.minDate()).getMonth();
       const maxDateYear = new Date(this.maxDate()).getFullYear();
       const maxDateMonth = new Date(this.maxDate()).getMonth();
+
+      if (getYearFromMonth === minDateYear && getYearFromMonth === maxDateYear) {
+        return month < minDateMonth || month > maxDateMonth;
+      }
 
       if (getYearFromMonth === minDateYear) {
         return month < minDateMonth;
@@ -232,6 +243,7 @@ export default {
     },
     getMonthClasses(month) {
       if (this.type !== 'month') {
+        // console.log('month => ', month)
         if (this.isDisabledMonth(month)) return 'disabled';
         if (this.calendarMonth === month) return 'active';
         return '';

@@ -3119,12 +3119,22 @@
         );
       },
       isDisabledMonth: function isDisabledMonth(month) {
-        if (!this.minDate() || !this.maxDate()) return false;
+        if (
+          typeof this.minDate !== 'function' ||
+          typeof this.maxDate !== 'function' ||
+          !this.minDate() ||
+          !this.maxDate()
+        )
+          return false;
         var getYearFromMonth = this.getMonthCellDate(month).getFullYear();
         var minDateYear = new Date(this.minDate()).getFullYear();
         var minDateMonth = new Date(this.minDate()).getMonth();
         var maxDateYear = new Date(this.maxDate()).getFullYear();
         var maxDateMonth = new Date(this.maxDate()).getMonth();
+
+        if (getYearFromMonth === minDateYear && getYearFromMonth === maxDateYear) {
+          return month < minDateMonth || month > maxDateMonth;
+        }
 
         if (getYearFromMonth === minDateYear) {
           return month < minDateMonth;
@@ -3226,6 +3236,7 @@
       },
       getMonthClasses: function getMonthClasses(month) {
         if (this.type !== 'month') {
+          // console.log('month => ', month)
           if (this.isDisabledMonth(month)) return 'disabled';
           if (this.calendarMonth === month) return 'active';
           return '';
