@@ -1,8 +1,16 @@
 <template>
   <div :class="`${prefixClass}-calendar ${prefixClass}-calendar-panel-year`">
     <div :class="`${prefixClass}-calendar-header`">
-      <icon-button type="double-left" @click="handleIconDoubleLeftClick"></icon-button>
-      <icon-button type="double-right" @click="handleIconDoubleRightClick"></icon-button>
+      <icon-button
+        :class="{ disabled: disableLeftClick }"
+        type="double-left"
+        @click="handleIconDoubleLeftClick"
+      ></icon-button>
+      <icon-button
+        :class="{ disabled: disableRightClick }"
+        type="double-right"
+        @click="handleIconDoubleRightClick"
+      ></icon-button>
       <span :class="`${prefixClass}-calendar-header-label`">
         <span>{{ firstYear }}</span>
         <span :class="`${prefixClass}-calendar-decade-separator`"></span>
@@ -52,6 +60,12 @@ export default {
     getYearPanel: {
       type: Function,
     },
+    minDate: {
+      type: Function,
+    },
+    maxDate: {
+      type: Function,
+    },
   },
   computed: {
     years() {
@@ -68,6 +82,20 @@ export default {
       const last = arr => arr[arr.length - 1];
       return last(last(this.years));
     },
+    disableLeftClick() {
+      return (
+        typeof this.minDate === 'function' &&
+        this.minDate() &&
+        this.minDate().getFullYear() > this.lastYear - 10
+      );
+    },
+    disableRightClick() {
+      return (
+        typeof this.maxDate === 'function' &&
+        this.maxDate() &&
+        this.maxDate().getFullYear() < this.firstYear + 10
+      );
+    },
   },
   methods: {
     getYears(calendar) {
@@ -79,16 +107,19 @@ export default {
       return chunk(years, 2);
     },
     handleIconDoubleLeftClick() {
+      const yearsToDecrease = this.disableLeftClick ? 0 : 10;
+
       this.$emit(
         'changecalendar',
-        setYear(this.calendar, v => v - 10),
+        setYear(this.calendar, v => v - yearsToDecrease),
         'last-decade'
       );
     },
     handleIconDoubleRightClick() {
+      const yearsToIncrease = this.disableRightClick ? 0 : 10;
       this.$emit(
         'changecalendar',
-        setYear(this.calendar, v => v + 10),
+        setYear(this.calendar, v => v + yearsToIncrease),
         'next-decade'
       );
     },
@@ -98,7 +129,8 @@ export default {
         target = target.parentNode;
       }
       const year = target.getAttribute('data-year');
-      if (year) {
+      const yearDisabled = target.getAttribute('class').indexOf('disabled') > -1;
+      if (year && !yearDisabled) {
         this.$emit('select', parseInt(year, 10));
       }
     },

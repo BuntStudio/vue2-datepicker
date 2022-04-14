@@ -1,8 +1,16 @@
 <template>
   <div :class="`${prefixClass}-calendar ${prefixClass}-calendar-panel-month`">
     <div :class="`${prefixClass}-calendar-header`">
-      <icon-button type="double-left" @click="handleIconDoubleLeftClick"></icon-button>
-      <icon-button type="double-right" @click="handleIconDoubleRightClick"></icon-button>
+      <icon-button
+        :class="{ disabled: disableLeftClick }"
+        type="double-left"
+        @click="handleIconDoubleLeftClick"
+      ></icon-button>
+      <icon-button
+        :class="{ disabled: disableRightClick }"
+        type="double-right"
+        @click="handleIconDoubleRightClick"
+      ></icon-button>
       <span :class="`${prefixClass}-calendar-header-label`">
         <button
           type="button"
@@ -57,6 +65,12 @@ export default {
       type: Function,
       default: () => [],
     },
+    minDate: {
+      type: Function,
+    },
+    maxDate: {
+      type: Function,
+    },
   },
   computed: {
     calendarYear() {
@@ -70,19 +84,36 @@ export default {
       });
       return chunk(months, 3);
     },
+    disableLeftClick() {
+      return (
+        typeof this.minDate === 'function' &&
+        this.minDate() &&
+        this.minDate().getFullYear() > this.calendarYear - 1
+      );
+    },
+    disableRightClick() {
+      return (
+        typeof this.maxDate === 'function' &&
+        this.maxDate() &&
+        this.maxDate().getFullYear() < this.calendarYear + 1
+      );
+    },
   },
   methods: {
     handleIconDoubleLeftClick() {
+      const yearsToDecrease = this.disableLeftClick ? 0 : 1;
+
       this.$emit(
         'changecalendar',
-        setYear(this.calendar, v => v - 1),
+        setYear(this.calendar, v => v - yearsToDecrease),
         'last-year'
       );
     },
     handleIconDoubleRightClick() {
+      const yearsToIncrease = this.disableRightClick ? 0 : 1;
       this.$emit(
         'changecalendar',
-        setYear(this.calendar, v => v + 1),
+        setYear(this.calendar, v => v + yearsToIncrease),
         'next-year'
       );
     },
@@ -95,7 +126,8 @@ export default {
         target = target.parentNode;
       }
       const month = target.getAttribute('data-month');
-      if (month) {
+      const monthDisabled = target.getAttribute('class').indexOf('disabled') > -1;
+      if (month && !monthDisabled) {
         this.$emit('select', parseInt(month, 10));
       }
     },

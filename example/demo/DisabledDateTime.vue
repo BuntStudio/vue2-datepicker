@@ -6,6 +6,8 @@
         v-model="value1"
         :default-value="new Date()"
         :disabled-date="disabledBeforeTodayAndAfterAWeek"
+        :min-date="() => new Date(2001, 1, 1, 0, 0, 0, 0)"
+        :max-date="() => new Date(2022, 7, 1, 0, 0, 0, 0)"
       ></date-picker>
     </section>
     <section>

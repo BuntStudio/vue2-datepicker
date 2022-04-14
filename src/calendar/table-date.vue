@@ -1,10 +1,26 @@
 <template>
   <div :class="`${prefixClass}-calendar ${prefixClass}-calendar-panel-date`">
     <div :class="`${prefixClass}-calendar-header`">
-      <icon-button type="double-left" @click="handleIconDoubleLeftClick"></icon-button>
-      <icon-button type="left" @click="handleIconLeftClick"></icon-button>
-      <icon-button type="double-right" @click="handleIconDoubleRightClick"></icon-button>
-      <icon-button type="right" @click="handleIconRightClick"></icon-button>
+      <icon-button
+        :class="{ disabled: disableDoubleLeftClick }"
+        type="double-left"
+        @click="handleIconDoubleLeftClick"
+      ></icon-button>
+      <icon-button
+        :class="{ disabled: disableLeftClick }"
+        type="left"
+        @click="handleIconLeftClick"
+      ></icon-button>
+      <icon-button
+        :class="{ disabled: disableDoubleRightClick }"
+        type="double-right"
+        @click="handleIconDoubleRightClick"
+      ></icon-button>
+      <icon-button
+        :class="{ disabled: disableRightClick }"
+        type="right"
+        @click="handleIconRightClick"
+      ></icon-button>
       <span :class="`${prefixClass}-calendar-header-label`">
         <button
           v-for="item in yearMonth"
@@ -107,6 +123,12 @@ export default {
       type: Function,
       default: () => [],
     },
+    minDate: {
+      type: Function,
+    },
+    maxDate: {
+      type: Function,
+    },
   },
   computed: {
     firstDayOfWeek() {
@@ -139,33 +161,60 @@ export default {
       });
       return chunk(arr, 7);
     },
+    disableLeftClick() {
+      return this.disableDoubleLeftClick && this.minDate().getMonth() >= this.calendar.getMonth();
+    },
+    disableRightClick() {
+      return this.disableDoubleRightClick && this.maxDate().getMonth() <= this.calendar.getMonth();
+    },
+    disableDoubleLeftClick() {
+      return (
+        typeof this.minDate === 'function' &&
+        this.minDate() &&
+        this.minDate().getFullYear() > this.calendar.getFullYear() - 1
+      );
+    },
+    disableDoubleRightClick() {
+      return (
+        typeof this.maxDate === 'function' &&
+        this.maxDate() &&
+        this.maxDate().getFullYear() < this.calendar.getFullYear() + 1
+      );
+    },
   },
   methods: {
     handleIconLeftClick() {
+      const monthToDecrease = this.disableLeftClick ? 0 : 1;
+
       this.$emit(
         'changecalendar',
-        setMonth(this.calendar, v => v - 1),
+        setMonth(this.calendar, v => v - monthToDecrease),
         'last-month'
       );
     },
     handleIconRightClick() {
+      const monthToIncrease = this.disableRightClick ? 0 : 1;
       this.$emit(
         'changecalendar',
-        setMonth(this.calendar, v => v + 1),
+        setMonth(this.calendar, v => v + monthToIncrease),
         'next-month'
       );
     },
     handleIconDoubleLeftClick() {
+      const yearsToDecrease = this.disableDoubleLeftClick ? 0 : 1;
+
       this.$emit(
         'changecalendar',
-        setYear(this.calendar, v => v - 1),
+        setYear(this.calendar, v => v - yearsToDecrease),
         'last-year'
       );
     },
     handleIconDoubleRightClick() {
+      const yearsToIncrease = this.disableDoubleRightClick ? 0 : 1;
+
       this.$emit(
         'changecalendar',
-        setYear(this.calendar, v => v + 1),
+        setYear(this.calendar, v => v + yearsToIncrease),
         'next-year'
       );
     },

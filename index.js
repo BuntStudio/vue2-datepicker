@@ -2053,6 +2053,12 @@
           return [];
         },
       },
+      minDate: {
+        type: Function,
+      },
+      maxDate: {
+        type: Function,
+      },
     },
     computed: {
       firstDayOfWeek: function firstDayOfWeek() {
@@ -2090,40 +2096,66 @@
         });
         return chunk(arr, 7);
       },
+      disableLeftClick: function disableLeftClick() {
+        return this.disableDoubleLeftClick && this.minDate().getMonth() >= this.calendar.getMonth();
+      },
+      disableRightClick: function disableRightClick() {
+        return (
+          this.disableDoubleRightClick && this.maxDate().getMonth() <= this.calendar.getMonth()
+        );
+      },
+      disableDoubleLeftClick: function disableDoubleLeftClick() {
+        return (
+          typeof this.minDate === 'function' &&
+          this.minDate() &&
+          this.minDate().getFullYear() > this.calendar.getFullYear() - 1
+        );
+      },
+      disableDoubleRightClick: function disableDoubleRightClick() {
+        return (
+          typeof this.maxDate === 'function' &&
+          this.maxDate() &&
+          this.maxDate().getFullYear() < this.calendar.getFullYear() + 1
+        );
+      },
     },
     methods: {
       handleIconLeftClick: function handleIconLeftClick() {
+        var monthToDecrease = this.disableLeftClick ? 0 : 1;
         this.$emit(
           'changecalendar',
           setMonth(this.calendar, function(v) {
-            return v - 1;
+            return v - monthToDecrease;
           }),
           'last-month'
         );
       },
       handleIconRightClick: function handleIconRightClick() {
+        var monthToIncrease = this.disableRightClick ? 0 : 1;
         this.$emit(
           'changecalendar',
           setMonth(this.calendar, function(v) {
-            return v + 1;
+            return v + monthToIncrease;
           }),
           'next-month'
         );
       },
       handleIconDoubleLeftClick: function handleIconDoubleLeftClick() {
+        var yearsToDecrease = this.disableDoubleLeftClick ? 0 : 1;
         this.$emit(
           'changecalendar',
           setYear(this.calendar, function(v) {
-            return v - 1;
+            return v - yearsToDecrease;
           }),
           'last-year'
         );
       },
       handleIconDoubleRightClick: function handleIconDoubleRightClick() {
+        var yearsToIncrease = this.disableDoubleRightClick ? 0 : 1;
         this.$emit(
           'changecalendar',
           setYear(this.calendar, function(v) {
-            return v + 1;
+            return v + yearsToIncrease;
           }),
           'next-year'
         );
@@ -2201,6 +2233,9 @@
           },
           [
             _c('icon-button', {
+              class: {
+                disabled: _vm.disableDoubleLeftClick,
+              },
               attrs: {
                 type: 'double-left',
               },
@@ -2210,6 +2245,9 @@
             }),
             _vm._v(' '),
             _c('icon-button', {
+              class: {
+                disabled: _vm.disableLeftClick,
+              },
               attrs: {
                 type: 'left',
               },
@@ -2219,6 +2257,9 @@
             }),
             _vm._v(' '),
             _c('icon-button', {
+              class: {
+                disabled: _vm.disableDoubleRightClick,
+              },
               attrs: {
                 type: 'double-right',
               },
@@ -2228,6 +2269,9 @@
             }),
             _vm._v(' '),
             _c('icon-button', {
+              class: {
+                disabled: _vm.disableRightClick,
+              },
               attrs: {
                 type: 'right',
               },
@@ -2443,6 +2487,12 @@
           return [];
         },
       },
+      minDate: {
+        type: Function,
+      },
+      maxDate: {
+        type: Function,
+      },
     },
     computed: {
       calendarYear: function calendarYear() {
@@ -2459,22 +2509,38 @@
         });
         return chunk(months, 3);
       },
+      disableLeftClick: function disableLeftClick() {
+        return (
+          typeof this.minDate === 'function' &&
+          this.minDate() &&
+          this.minDate().getFullYear() > this.calendarYear - 1
+        );
+      },
+      disableRightClick: function disableRightClick() {
+        return (
+          typeof this.maxDate === 'function' &&
+          this.maxDate() &&
+          this.maxDate().getFullYear() < this.calendarYear + 1
+        );
+      },
     },
     methods: {
       handleIconDoubleLeftClick: function handleIconDoubleLeftClick() {
+        var yearsToDecrease = this.disableLeftClick ? 0 : 1;
         this.$emit(
           'changecalendar',
           setYear(this.calendar, function(v) {
-            return v - 1;
+            return v - yearsToDecrease;
           }),
           'last-year'
         );
       },
       handleIconDoubleRightClick: function handleIconDoubleRightClick() {
+        var yearsToIncrease = this.disableRightClick ? 0 : 1;
         this.$emit(
           'changecalendar',
           setYear(this.calendar, function(v) {
-            return v + 1;
+            return v + yearsToIncrease;
           }),
           'next-year'
         );
@@ -2490,8 +2556,9 @@
         }
 
         var month = target.getAttribute('data-month');
+        var monthDisabled = target.getAttribute('class').indexOf('disabled') > -1;
 
-        if (month) {
+        if (month && !monthDisabled) {
           this.$emit('select', parseInt(month, 10));
         }
       },
@@ -2522,6 +2589,9 @@
           },
           [
             _c('icon-button', {
+              class: {
+                disabled: _vm.disableLeftClick,
+              },
               attrs: {
                 type: 'double-left',
               },
@@ -2531,6 +2601,9 @@
             }),
             _vm._v(' '),
             _c('icon-button', {
+              class: {
+                disabled: _vm.disableRightClick,
+              },
               attrs: {
                 type: 'double-right',
               },
@@ -2671,6 +2744,12 @@
       getYearPanel: {
         type: Function,
       },
+      minDate: {
+        type: Function,
+      },
+      maxDate: {
+        type: Function,
+      },
     },
     computed: {
       years: function years() {
@@ -2692,6 +2771,20 @@
 
         return last(last(this.years));
       },
+      disableLeftClick: function disableLeftClick() {
+        return (
+          typeof this.minDate === 'function' &&
+          this.minDate() &&
+          this.minDate().getFullYear() > this.lastYear - 10
+        );
+      },
+      disableRightClick: function disableRightClick() {
+        return (
+          typeof this.maxDate === 'function' &&
+          this.maxDate() &&
+          this.maxDate().getFullYear() < this.firstYear + 10
+        );
+      },
     },
     methods: {
       getYears: function getYears(calendar) {
@@ -2705,19 +2798,21 @@
         return chunk(years, 2);
       },
       handleIconDoubleLeftClick: function handleIconDoubleLeftClick() {
+        var yearsToDecrease = this.disableLeftClick ? 0 : 10;
         this.$emit(
           'changecalendar',
           setYear(this.calendar, function(v) {
-            return v - 10;
+            return v - yearsToDecrease;
           }),
           'last-decade'
         );
       },
       handleIconDoubleRightClick: function handleIconDoubleRightClick() {
+        var yearsToIncrease = this.disableRightClick ? 0 : 10;
         this.$emit(
           'changecalendar',
           setYear(this.calendar, function(v) {
-            return v + 10;
+            return v + yearsToIncrease;
           }),
           'next-decade'
         );
@@ -2730,8 +2825,9 @@
         }
 
         var year = target.getAttribute('data-year');
+        var yearDisabled = target.getAttribute('class').indexOf('disabled') > -1;
 
-        if (year) {
+        if (year && !yearDisabled) {
           this.$emit('select', parseInt(year, 10));
         }
       },
@@ -2762,6 +2858,9 @@
           },
           [
             _c('icon-button', {
+              class: {
+                disabled: _vm.disableLeftClick,
+              },
               attrs: {
                 type: 'double-left',
               },
@@ -2771,6 +2870,9 @@
             }),
             _vm._v(' '),
             _c('icon-button', {
+              class: {
+                disabled: _vm.disableRightClick,
+              },
               attrs: {
                 type: 'double-right',
               },
@@ -2902,6 +3004,18 @@
       defaultPanel: {
         type: String,
       },
+      minDate: {
+        type: Function,
+        default: function _default() {
+          return false;
+        },
+      },
+      maxDate: {
+        type: Function,
+        default: function _default() {
+          return false;
+        },
+      },
       disabledDate: {
         type: Function,
         default: function _default() {
@@ -2997,6 +3111,35 @@
       isDisabled: function isDisabled(date) {
         return this.disabledDate(new Date(date), this.innerValue);
       },
+      isDisabledYear: function isDisabledYear(year) {
+        if (!this.minDate() || !this.maxDate()) return false;
+        return (
+          year < new Date(this.minDate()).getFullYear() ||
+          year > new Date(this.maxDate()).getFullYear()
+        );
+      },
+      isDisabledMonth: function isDisabledMonth(month) {
+        if (!this.minDate() || !this.maxDate()) return false;
+        var getYearFromMonth = this.getMonthCellDate(month).getFullYear();
+        var minDateYear = new Date(this.minDate()).getFullYear();
+        var minDateMonth = new Date(this.minDate()).getMonth();
+        var maxDateYear = new Date(this.maxDate()).getFullYear();
+        var maxDateMonth = new Date(this.maxDate()).getMonth();
+
+        if (getYearFromMonth === minDateYear) {
+          return month < minDateMonth;
+        }
+
+        if (getYearFromMonth === maxDateYear) {
+          return month > maxDateMonth;
+        }
+
+        if (getYearFromMonth < minDateYear || getYearFromMonth > maxDateYear) {
+          return true;
+        }
+
+        return false; // return year < new Date(this.minDate()).getFullYear() || year > new Date(this.maxDate()).getFullYear();
+      },
       isCustomDisabled: function isCustomDisabled(date) {
         return this.compareDisabledDate(new Date(date), this.innerValue);
       },
@@ -3083,7 +3226,9 @@
       },
       getMonthClasses: function getMonthClasses(month) {
         if (this.type !== 'month') {
-          return this.calendarMonth === month ? 'active' : '';
+          if (this.isDisabledMonth(month)) return 'disabled';
+          if (this.calendarMonth === month) return 'active';
+          return '';
         }
 
         var classes = [];
@@ -3093,7 +3238,10 @@
       },
       getYearClasses: function getYearClasses(year) {
         if (this.type !== 'year') {
-          return this.calendarYear === year ? 'active' : '';
+          // new Date(2020, 0, 1, 0, 0, 0, 0);
+          if (this.isDisabledYear(year)) return 'disabled';
+          if (this.calendarYear === year) return 'active';
+          return ''; // return this.calendarYear === year ? 'active' : '';
         }
 
         var classes = [];
@@ -3105,7 +3253,6 @@
         var customDisabled = this.isCustomDisabled(cellDate);
 
         if (customDisabled) {
-          // console.log('customDisabled => ', customDisabled)
           if (customDisabled === 1) return 'custom-disabled start-interval-disabled disabled';
           if (customDisabled === 2) return 'custom-disabled disabled';
           if (customDisabled === 3) return 'custom-disabled end-interval-disabled disabled';
@@ -3149,6 +3296,8 @@
             calendar: innerCalendar,
             getCellClasses: this.getYearClasses,
             getYearPanel: this.getYearPanel,
+            maxDate: this.maxDate,
+            minDate: this.minDate,
           },
           on: {
             select: this.handleSelectYear,
@@ -3162,6 +3311,8 @@
           attrs: {
             calendar: innerCalendar,
             getCellClasses: this.getMonthClasses,
+            maxDate: this.maxDate,
+            minDate: this.minDate,
           },
           on: {
             select: this.handleSelectMonth,
@@ -3182,6 +3333,8 @@
           getCellClasses: this.getDateClasses,
           getRowClasses: this.getWeekState,
           titleFormat: this.titleFormat,
+          maxDate: this.maxDate,
+          minDate: this.minDate,
           showWeekNumber:
             typeof this.showWeekNumber === 'boolean' ? this.showWeekNumber : this.type === 'week',
         },

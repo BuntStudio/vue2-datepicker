@@ -14,9 +14,13 @@
   border-radius: 4px;
   color: $default-color;
   white-space: nowrap;
-  &:hover {
+  &:not(.disabled):hover {
     border-color: $primary-color;
     color: $primary-color;
+  }
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 

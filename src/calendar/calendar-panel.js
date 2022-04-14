@@ -33,6 +33,14 @@ export default {
     defaultPanel: {
       type: String,
     },
+    minDate: {
+      type: Function,
+      default: () => false,
+    },
+    maxDate: {
+      type: Function,
+      default: () => false,
+    },
     disabledDate: {
       type: Function,
       default: () => false,
@@ -118,6 +126,37 @@ export default {
     isDisabled(date) {
       return this.disabledDate(new Date(date), this.innerValue);
     },
+    isDisabledYear(year) {
+      if (!this.minDate() || !this.maxDate()) return false;
+
+      return (
+        year < new Date(this.minDate()).getFullYear() ||
+        year > new Date(this.maxDate()).getFullYear()
+      );
+    },
+    isDisabledMonth(month) {
+      if (!this.minDate() || !this.maxDate()) return false;
+      const getYearFromMonth = this.getMonthCellDate(month).getFullYear();
+      const minDateYear = new Date(this.minDate()).getFullYear();
+      const minDateMonth = new Date(this.minDate()).getMonth();
+      const maxDateYear = new Date(this.maxDate()).getFullYear();
+      const maxDateMonth = new Date(this.maxDate()).getMonth();
+
+      if (getYearFromMonth === minDateYear) {
+        return month < minDateMonth;
+      }
+
+      if (getYearFromMonth === maxDateYear) {
+        return month > maxDateMonth;
+      }
+
+      if (getYearFromMonth < minDateYear || getYearFromMonth > maxDateYear) {
+        return true;
+      }
+
+      return false;
+      // return year < new Date(this.minDate()).getFullYear() || year > new Date(this.maxDate()).getFullYear();
+    },
     isCustomDisabled(date) {
       return this.compareDisabledDate(new Date(date), this.innerValue);
     },
@@ -193,8 +232,11 @@ export default {
     },
     getMonthClasses(month) {
       if (this.type !== 'month') {
-        return this.calendarMonth === month ? 'active' : '';
+        if (this.isDisabledMonth(month)) return 'disabled';
+        if (this.calendarMonth === month) return 'active';
+        return '';
       }
+
       const classes = [];
       const cellDate = this.getMonthCellDate(month);
       classes.push(this.getStateClass(cellDate));
@@ -202,7 +244,11 @@ export default {
     },
     getYearClasses(year) {
       if (this.type !== 'year') {
-        return this.calendarYear === year ? 'active' : '';
+        // new Date(2020, 0, 1, 0, 0, 0, 0);
+        if (this.isDisabledYear(year)) return 'disabled';
+        if (this.calendarYear === year) return 'active';
+        return '';
+        // return this.calendarYear === year ? 'active' : '';
       }
       const classes = [];
       const cellDate = this.getYearCellDate(year);
@@ -213,7 +259,6 @@ export default {
       const customDisabled = this.isCustomDisabled(cellDate);
 
       if (customDisabled) {
-        // console.log('customDisabled => ', customDisabled)
         if (customDisabled === 1) return 'custom-disabled start-interval-disabled disabled';
         if (customDisabled === 2) return 'custom-disabled disabled';
         if (customDisabled === 3) return 'custom-disabled end-interval-disabled disabled';
@@ -248,6 +293,8 @@ export default {
           calendar={innerCalendar}
           getCellClasses={this.getYearClasses}
           getYearPanel={this.getYearPanel}
+          maxDate={this.maxDate}
+          minDate={this.minDate}
           onSelect={this.handleSelectYear}
           onChangecalendar={this.handleCalendarChange}
         />
@@ -258,6 +305,8 @@ export default {
         <TableMonth
           calendar={innerCalendar}
           getCellClasses={this.getMonthClasses}
+          maxDate={this.maxDate}
+          minDate={this.minDate}
           onSelect={this.handleSelectMonth}
           onChangepanel={this.handelPanelChange}
           onChangecalendar={this.handleCalendarChange}
@@ -271,6 +320,8 @@ export default {
         getCellClasses={this.getDateClasses}
         getRowClasses={this.getWeekState}
         titleFormat={this.titleFormat}
+        maxDate={this.maxDate}
+        minDate={this.minDate}
         showWeekNumber={
           typeof this.showWeekNumber === 'boolean' ? this.showWeekNumber : this.type === 'week'
         }
