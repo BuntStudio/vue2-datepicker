@@ -2499,32 +2499,48 @@
         return this.calendar.getFullYear();
       },
       months: function months() {
+        var _this = this;
+
         var locale = this.getLocale();
         var monthsLocale = locale.months || locale.formatLocale.monthsShort;
-        var months = monthsLocale.map(function(text, month) {
-          return {
-            text: text,
-            month: month,
-          };
-        });
+        var months = monthsLocale
+          .map(function(text, month) {
+            return {
+              text: text,
+              month: month,
+            };
+          })
+          .filter(function(text, month) {
+            return _this.getCellClasses(month).indexOf('disabled') === -1;
+          });
         return chunk(months, 3);
       },
       disableLeftClick: function disableLeftClick() {
-        return (
-          typeof this.minDate === 'function' &&
-          this.minDate() &&
-          this.minDate().getFullYear() > this.calendarYear - 1
-        );
+        return this.checkIfYearNotAvailable(this.calendarYear - 1); // return (
+        //   typeof this.minDate === 'function' &&
+        //   this.minDate() &&
+        //   this.minDate().getFullYear() > this.calendarYear - 1
+        // );
       },
       disableRightClick: function disableRightClick() {
-        return (
-          typeof this.maxDate === 'function' &&
-          this.maxDate() &&
-          this.maxDate().getFullYear() < this.calendarYear + 1
-        );
+        return this.checkIfYearNotAvailable(this.calendarYear + 1); // return (
+        //   typeof this.maxDate === 'function' &&
+        //   this.maxDate() &&
+        //   this.maxDate().getFullYear() < this.calendarYear + 1
+        // );
       },
     },
     methods: {
+      checkIfYearNotAvailable: function checkIfYearNotAvailable(year) {
+        return (
+          (typeof this.maxDate === 'function' &&
+            this.maxDate() &&
+            this.maxDate().getFullYear() < year) ||
+          (typeof this.minDate === 'function' &&
+            this.minDate() &&
+            this.minDate().getFullYear() > year)
+        );
+      },
       handleIconDoubleLeftClick: function handleIconDoubleLeftClick() {
         var yearsToDecrease = this.disableLeftClick ? 0 : 1;
         this.$emit(
@@ -2629,7 +2645,7 @@
                       click: _vm.handlePanelChange,
                     },
                   },
-                  [_vm._v('\n        ' + _vm._s(_vm.calendarYear) + '\n      ')]
+                  [_vm._v('\n          ' + _vm._s(_vm.calendarYear) + '\n        ')]
                 ),
               ]
             ),
@@ -2657,21 +2673,25 @@
                   {
                     key: i,
                   },
-                  _vm._l(row, function(cell, j) {
-                    return _c(
-                      'td',
-                      {
-                        key: j,
-                        staticClass: 'cell',
-                        class: _vm.getCellClasses(cell.month),
-                        attrs: {
-                          'data-month': cell.month,
-                        },
-                      },
-                      [_c('div', [_vm._v(_vm._s(cell.text))])]
-                    );
-                  }),
-                  0
+                  [
+                    _vm._l(row, function(cell, j) {
+                      return [
+                        _c(
+                          'td',
+                          {
+                            key: j,
+                            staticClass: 'cell',
+                            class: _vm.getCellClasses(cell.month),
+                            attrs: {
+                              'data-month': cell.month,
+                            },
+                          },
+                          [_c('div', [_vm._v(_vm._s(cell.text))])]
+                        ),
+                      ];
+                    }),
+                  ],
+                  2
                 );
               }),
               0
@@ -2772,27 +2792,39 @@
         return last(last(this.years));
       },
       disableLeftClick: function disableLeftClick() {
-        return (
-          typeof this.minDate === 'function' &&
-          this.minDate() &&
-          this.minDate().getFullYear() > this.lastYear - 10
-        );
+        return this.checkIfYearNotAvailable(this.lastYear - 10); // return (
+        //   typeof this.minDate === 'function' &&
+        //   this.minDate() &&
+        //   this.minDate().getFullYear() > this.lastYear - 10
+        // );
       },
       disableRightClick: function disableRightClick() {
-        return (
-          typeof this.maxDate === 'function' &&
-          this.maxDate() &&
-          this.maxDate().getFullYear() < this.firstYear + 10
-        );
+        return this.checkIfYearNotAvailable(this.firstYear + 10); // return (
+        //   typeof this.maxDate === 'function' &&
+        //   this.maxDate() &&
+        //   this.maxDate().getFullYear() < this.firstYear + 10
+        // );
       },
     },
     methods: {
+      checkIfYearNotAvailable: function checkIfYearNotAvailable(year) {
+        return (
+          (typeof this.maxDate === 'function' &&
+            this.maxDate() &&
+            this.maxDate().getFullYear() < year) ||
+          (typeof this.minDate === 'function' &&
+            this.minDate() &&
+            this.minDate().getFullYear() > year)
+        );
+      },
       getYears: function getYears(calendar) {
         var firstYear = Math.floor(calendar.getFullYear() / 10) * 10;
         var years = [];
 
         for (var i = 0; i < 10; i++) {
-          years.push(firstYear + i);
+          if (!this.checkIfYearNotAvailable(firstYear + i)) {
+            years.push(firstYear + i);
+          }
         }
 
         return chunk(years, 2);
@@ -2920,21 +2952,25 @@
                   {
                     key: i,
                   },
-                  _vm._l(row, function(cell, j) {
-                    return _c(
-                      'td',
-                      {
-                        key: j,
-                        staticClass: 'cell',
-                        class: _vm.getCellClasses(cell),
-                        attrs: {
-                          'data-year': cell,
-                        },
-                      },
-                      [_c('div', [_vm._v(_vm._s(cell))])]
-                    );
-                  }),
-                  0
+                  [
+                    _vm._l(row, function(cell, j) {
+                      return [
+                        _c(
+                          'td',
+                          {
+                            key: j,
+                            staticClass: 'cell',
+                            class: _vm.getCellClasses(cell),
+                            attrs: {
+                              'data-year': cell,
+                            },
+                          },
+                          [_c('div', [_vm._v(_vm._s(cell))])]
+                        ),
+                      ];
+                    }),
+                  ],
+                  2
                 );
               }),
               0

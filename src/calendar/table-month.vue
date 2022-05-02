@@ -24,15 +24,12 @@
     <div :class="`${prefixClass}-calendar-content`">
       <table :class="`${prefixClass}-table ${prefixClass}-table-month`" @click="handleClick">
         <tr v-for="(row, i) in months" :key="i">
-          <td
-            v-for="(cell, j) in row"
-            :key="j"
-            :data-month="cell.month"
-            class="cell"
-            :class="getCellClasses(cell.month)"
-          >
-            <div>{{ cell.text }}</div>
-          </td>
+          <template v-for="(cell, j) in row">
+            <!--            v-if="getCellClasses(cell.month).indexOf('disabled') === -1"-->
+            <td :key="j" :data-month="cell.month" class="cell" :class="getCellClasses(cell.month)">
+              <div>{{ cell.text }}</div>
+            </td>
+          </template>
         </tr>
       </table>
     </div>
@@ -79,27 +76,41 @@ export default {
     months() {
       const locale = this.getLocale();
       const monthsLocale = locale.months || locale.formatLocale.monthsShort;
-      const months = monthsLocale.map((text, month) => {
-        return { text, month };
-      });
+      const months = monthsLocale
+        .map((text, month) => {
+          return { text, month };
+        })
+        .filter((text, month) => this.getCellClasses(month).indexOf('disabled') === -1);
       return chunk(months, 3);
     },
     disableLeftClick() {
-      return (
-        typeof this.minDate === 'function' &&
-        this.minDate() &&
-        this.minDate().getFullYear() > this.calendarYear - 1
-      );
+      return this.checkIfYearNotAvailable(this.calendarYear - 1);
+      // return (
+      //   typeof this.minDate === 'function' &&
+      //   this.minDate() &&
+      //   this.minDate().getFullYear() > this.calendarYear - 1
+      // );
     },
     disableRightClick() {
-      return (
-        typeof this.maxDate === 'function' &&
-        this.maxDate() &&
-        this.maxDate().getFullYear() < this.calendarYear + 1
-      );
+      return this.checkIfYearNotAvailable(this.calendarYear + 1);
+      // return (
+      //   typeof this.maxDate === 'function' &&
+      //   this.maxDate() &&
+      //   this.maxDate().getFullYear() < this.calendarYear + 1
+      // );
     },
   },
   methods: {
+    checkIfYearNotAvailable(year) {
+      return (
+        (typeof this.maxDate === 'function' &&
+          this.maxDate() &&
+          this.maxDate().getFullYear() < year) ||
+        (typeof this.minDate === 'function' &&
+          this.minDate() &&
+          this.minDate().getFullYear() > year)
+      );
+    },
     handleIconDoubleLeftClick() {
       const yearsToDecrease = this.disableLeftClick ? 0 : 1;
 

@@ -37,7 +37,7 @@ export default {
       value1: [new Date(2022, 2, 14, 2), new Date(2022, 3, 14, 3)],
       value2: [],
       maxDate: '2022-04-14',
-      minDate: '2022-03-10',
+      minDate: '2021-08-19',
       // ["[native Date Mon Mar 14 2022 02:00:00 GMT+0200 (Eastern European Standard Time)]","[native Date Thu Apr 14 2022 03:00:00 GMT+0300 (Eastern European Summer Time)]"]
     };
   },

@@ -20,15 +20,12 @@
     <div :class="`${prefixClass}-calendar-content`">
       <table :class="`${prefixClass}-table ${prefixClass}-table-year`" @click="handleClick">
         <tr v-for="(row, i) in years" :key="i">
-          <td
-            v-for="(cell, j) in row"
-            :key="j"
-            :data-year="cell"
-            class="cell"
-            :class="getCellClasses(cell)"
-          >
-            <div>{{ cell }}</div>
-          </td>
+          <template v-for="(cell, j) in row">
+            <!--            v-if="getCellClasses(cell).indexOf('disabled') === -1"-->
+            <td :key="j" :data-year="cell" class="cell" :class="getCellClasses(cell)">
+              <div>{{ cell }}</div>
+            </td>
+          </template>
         </tr>
       </table>
     </div>
@@ -83,27 +80,43 @@ export default {
       return last(last(this.years));
     },
     disableLeftClick() {
-      return (
-        typeof this.minDate === 'function' &&
-        this.minDate() &&
-        this.minDate().getFullYear() > this.lastYear - 10
-      );
+      return this.checkIfYearNotAvailable(this.lastYear - 10);
+      // return (
+      //   typeof this.minDate === 'function' &&
+      //   this.minDate() &&
+      //   this.minDate().getFullYear() > this.lastYear - 10
+      // );
     },
     disableRightClick() {
-      return (
-        typeof this.maxDate === 'function' &&
-        this.maxDate() &&
-        this.maxDate().getFullYear() < this.firstYear + 10
-      );
+      return this.checkIfYearNotAvailable(this.firstYear + 10);
+      // return (
+      //   typeof this.maxDate === 'function' &&
+      //   this.maxDate() &&
+      //   this.maxDate().getFullYear() < this.firstYear + 10
+      // );
     },
   },
   methods: {
+    checkIfYearNotAvailable(year) {
+      return (
+        (typeof this.maxDate === 'function' &&
+          this.maxDate() &&
+          this.maxDate().getFullYear() < year) ||
+        (typeof this.minDate === 'function' &&
+          this.minDate() &&
+          this.minDate().getFullYear() > year)
+      );
+    },
     getYears(calendar) {
       const firstYear = Math.floor(calendar.getFullYear() / 10) * 10;
       const years = [];
+
       for (let i = 0; i < 10; i++) {
-        years.push(firstYear + i);
+        if (!this.checkIfYearNotAvailable(firstYear + i)) {
+          years.push(firstYear + i);
+        }
       }
+
       return chunk(years, 2);
     },
     handleIconDoubleLeftClick() {
