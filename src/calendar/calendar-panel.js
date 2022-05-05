@@ -193,8 +193,6 @@ export default {
       this.dispatchDatePicker('calendar-change', calendar, oldCalendar, type);
     },
     handelPanelChange(panel) {
-      // if(this.disableTableYear && panel === 'year') return 'false';
-      // if(this.disableTableMonth && panel === 'month') return 'false';
       if (
         !(this.disableTableMonth && panel === 'month') &&
         !(this.disableTableYear && panel === 'year')
