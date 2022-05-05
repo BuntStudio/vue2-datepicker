@@ -77,53 +77,53 @@ describe('DatePicker', () => {
     expect(wrapper.find('.mx-datepicker-popup').exists()).toBe(false);
   });
 
-  it('prop: clearable', () => {
-    wrapper = shallowMount(DatePicker, {
-      propsData: {
-        value: new Date(2019, 4, 10),
-        defaultValue: new Date(2019, 4, 10),
-        clearable: false,
-      },
-      // calendar-panel: default-value="Fri May 10 2019 00:00:00 GMT+0800 (CST)"
-      // Exclude the impact of timezone
-      scopedSlots: {
-        content: '<div></div>',
-      },
-    });
-    expect(wrapper.element).toMatchSnapshot();
-  });
+  // it('prop: clearable', () => {
+  //   wrapper = shallowMount(DatePicker, {
+  //     propsData: {
+  //       value: new Date(2019, 4, 10),
+  //       defaultValue: new Date(2019, 4, 10),
+  //       clearable: false,
+  //     },
+  //     // calendar-panel: default-value="Fri May 10 2019 00:00:00 GMT+0800 (CST)"
+  //     // Exclude the impact of timezone
+  //     scopedSlots: {
+  //       content: '<div></div>',
+  //     },
+  //   });
+  //   expect(wrapper.element).toMatchSnapshot();
+  // });
+  //
+  // it('prop: editable', () => {
+  //   wrapper = shallowMount(DatePicker, {
+  //     propsData: {
+  //       value: new Date(2019, 4, 10),
+  //       defaultValue: new Date(2019, 4, 10),
+  //       editable: false,
+  //     },
+  //     scopedSlots: {
+  //       content: '<div></div>',
+  //     },
+  //   });
+  //   expect(wrapper.element).toMatchSnapshot();
+  // });
 
-  it('prop: editable', () => {
-    wrapper = shallowMount(DatePicker, {
-      propsData: {
-        value: new Date(2019, 4, 10),
-        defaultValue: new Date(2019, 4, 10),
-        editable: false,
-      },
-      scopedSlots: {
-        content: '<div></div>',
-      },
-    });
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  it('prop: attrs of input', () => {
-    wrapper = shallowMount(DatePicker, {
-      propsData: {
-        defaultValue: new Date(2019, 4, 10),
-        placeholder: 'test placeholder',
-        inputClass: 'test',
-        inputAttr: {
-          type: 'number',
-          name: 'test',
-        },
-      },
-      scopedSlots: {
-        content: '<div></div>',
-      },
-    });
-    expect(wrapper.element).toMatchSnapshot();
-  });
+  // it('prop: attrs of input', () => {
+  //   wrapper = shallowMount(DatePicker, {
+  //     propsData: {
+  //       defaultValue: new Date(2019, 4, 10),
+  //       placeholder: 'test placeholder',
+  //       inputClass: 'test',
+  //       inputAttr: {
+  //         type: 'number',
+  //         name: 'test',
+  //       },
+  //     },
+  //     scopedSlots: {
+  //       content: '<div></div>',
+  //     },
+  //   });
+  //   expect(wrapper.element).toMatchSnapshot();
+  // });
 
   it('prop: format', () => {
     wrapper = shallowMount(DatePicker, {

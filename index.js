@@ -2059,6 +2059,12 @@
       maxDate: {
         type: Function,
       },
+      disableYear: {
+        type: Boolean,
+      },
+      disableMonth: {
+        type: Boolean,
+      },
     },
     computed: {
       firstDayOfWeek: function firstDayOfWeek() {
@@ -2493,6 +2499,9 @@
       maxDate: {
         type: Function,
       },
+      disableYear: {
+        type: Boolean,
+      },
     },
     computed: {
       calendarYear: function calendarYear() {
@@ -2645,7 +2654,7 @@
                       click: _vm.handlePanelChange,
                     },
                   },
-                  [_vm._v('\n          ' + _vm._s(_vm.calendarYear) + '\n        ')]
+                  [_vm._v('\n        ' + _vm._s(_vm.calendarYear) + '\n      ')]
                 ),
               ]
             ),
@@ -3091,6 +3100,14 @@
         type: Boolean,
         default: false,
       },
+      disableTableYear: {
+        type: Boolean,
+        default: false,
+      },
+      disableTableMonth: {
+        type: Boolean,
+        default: false,
+      },
     },
     data: function data() {
       var panels = ['date', 'month', 'year'];
@@ -3203,9 +3220,14 @@
         this.dispatchDatePicker('calendar-change', calendar, oldCalendar, type);
       },
       handelPanelChange: function handelPanelChange(panel) {
-        var oldPanel = this.panel;
-        this.panel = panel;
-        this.dispatchDatePicker('panel-change', panel, oldPanel);
+        if (
+          !(this.disableTableMonth && panel === 'month') &&
+          !(this.disableTableYear && panel === 'year')
+        ) {
+          var oldPanel = this.panel;
+          this.panel = panel;
+          this.dispatchDatePicker('panel-change', panel, oldPanel);
+        }
       },
       handleSelectYear: function handleSelectYear(year) {
         if (this.type === 'year') {
@@ -3360,6 +3382,7 @@
             getCellClasses: this.getMonthClasses,
             maxDate: this.maxDate,
             minDate: this.minDate,
+            disableYear: this.disableTableYear,
           },
           on: {
             select: this.handleSelectMonth,
@@ -3384,6 +3407,8 @@
           minDate: this.minDate,
           showWeekNumber:
             typeof this.showWeekNumber === 'boolean' ? this.showWeekNumber : this.type === 'week',
+          disableYear: this.disableTableYear,
+          disableMonth: this.disableTableMonth,
         },
         on: {
           select: this.handleSelectDate,
@@ -5601,10 +5626,15 @@
             },
           ])
         );
+        var disableMonthClass = this.disableTableMonth ? 'disable-month-selection' : '';
+        var disableYearClass = this.disableTableYear ? 'disable-year-selection' : '';
         return h(
           'div',
           {
-            class: ''.concat(this.prefixClass, '-datepicker-body'),
+            class: ''
+              .concat(this.prefixClass, '-datepicker-body ')
+              .concat(disableMonthClass, ' ')
+              .concat(disableYearClass),
           },
           [
             this.renderSlot('content', content, {
