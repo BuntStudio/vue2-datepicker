@@ -74,6 +74,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    disableTableYear: {
+      type: Boolean,
+      default: false,
+    },
+    disableTableMonth: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const panels = ['date', 'month', 'year'];
@@ -185,9 +193,16 @@ export default {
       this.dispatchDatePicker('calendar-change', calendar, oldCalendar, type);
     },
     handelPanelChange(panel) {
-      const oldPanel = this.panel;
-      this.panel = panel;
-      this.dispatchDatePicker('panel-change', panel, oldPanel);
+      // if(this.disableTableYear && panel === 'year') return 'false';
+      // if(this.disableTableMonth && panel === 'month') return 'false';
+      if (
+        !(this.disableTableMonth && panel === 'month') &&
+        !(this.disableTableYear && panel === 'year')
+      ) {
+        const oldPanel = this.panel;
+        this.panel = panel;
+        this.dispatchDatePicker('panel-change', panel, oldPanel);
+      }
     },
     handleSelectYear(year) {
       if (this.type === 'year') {
