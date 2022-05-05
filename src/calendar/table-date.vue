@@ -129,6 +129,12 @@ export default {
     maxDate: {
       type: Function,
     },
+    disableYear: {
+      type: Boolean,
+    },
+    disableMonth: {
+      type: Boolean,
+    },
   },
   computed: {
     firstDayOfWeek() {

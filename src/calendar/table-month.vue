@@ -68,6 +68,9 @@ export default {
     maxDate: {
       type: Function,
     },
+    disableYear: {
+      type: Boolean,
+    },
   },
   computed: {
     calendarYear() {

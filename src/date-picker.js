@@ -509,8 +509,10 @@ export default {
         select: this.handleSelectDate,
       };
       const content = <Component {...{ props, on, ref: 'picker' }} />;
+      const disableMonthClass = this.disableTableMonth ? 'disable-month-selection' : '';
+      const disableYearClass = this.disableTableYear ? 'disable-year-selection' : '';
       return (
-        <div class={`${this.prefixClass}-datepicker-body`}>
+        <div class={`${this.prefixClass}-datepicker-body ${disableMonthClass} ${disableYearClass}`}>
           {this.renderSlot('content', content, {
             value: this.currentValue,
             emit: this.handleSelectDate,

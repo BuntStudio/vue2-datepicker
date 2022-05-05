@@ -335,6 +335,7 @@ export default {
           onSelect={this.handleSelectMonth}
           onChangepanel={this.handelPanelChange}
           onChangecalendar={this.handleCalendarChange}
+          disableYear={this.disableTableYear}
         />
       );
     }
@@ -353,6 +354,8 @@ export default {
         onSelect={this.handleSelectDate}
         onChangepanel={this.handelPanelChange}
         onChangecalendar={this.handleCalendarChange}
+        disableYear={this.disableTableYear}
+        disableMonth={this.disableTableMonth}
       />
     );
   },
