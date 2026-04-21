@@ -1785,7 +1785,7 @@ var script$3 = {
       }
 
       var month = target.getAttribute('data-month');
-      var monthDisabled = target.getAttribute('class').indexOf('disabled') > -1;
+      var monthDisabled = (target.getAttribute('class') || '').indexOf('disabled') > -1;
 
       if (month && !monthDisabled) {
         this.$emit('select', parseInt(month, 10));
@@ -2070,7 +2070,7 @@ var script$4 = {
       }
 
       var year = target.getAttribute('data-year');
-      var yearDisabled = target.getAttribute('class').indexOf('disabled') > -1;
+      var yearDisabled = (target.getAttribute('class') || '').indexOf('disabled') > -1;
 
       if (year && !yearDisabled) {
         this.$emit('select', parseInt(year, 10));
