@@ -142,7 +142,7 @@ export default {
         target = target.parentNode;
       }
       const year = target.getAttribute('data-year');
-      const yearDisabled = target.getAttribute('class').indexOf('disabled') > -1;
+      const yearDisabled = (target.getAttribute('class') || '').indexOf('disabled') > -1;
       if (year && !yearDisabled) {
         this.$emit('select', parseInt(year, 10));
       }
