@@ -140,7 +140,7 @@ export default {
         target = target.parentNode;
       }
       const month = target.getAttribute('data-month');
-      const monthDisabled = target.getAttribute('class').indexOf('disabled') > -1;
+      const monthDisabled = (target.getAttribute('class') || '').indexOf('disabled') > -1;
       if (month && !monthDisabled) {
         this.$emit('select', parseInt(month, 10));
       }
